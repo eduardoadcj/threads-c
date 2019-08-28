@@ -13,6 +13,7 @@ int sum(int *v, int n){
 
     id = omp_get_thread_num();
 
+		// Vai exetar apenas uma vez por uma thread qualquer elegida
 		#pragma omp single
 		{
 			nt = omp_get_num_threads();
@@ -24,18 +25,21 @@ int sum(int *v, int n){
     for (i = id; i < n; i+=nt)
   		t[id] += v[i];
 
-  }
+		/*
+			Fica mais lento por causa da questão do compartilhamento de cache.
+			Cada linha de cache possui 64bytes, cada int possui 4bytes. Necessáriamente as variáveis
+			gravam uma após a outra na mesma linha de cache. Então, mesmo sendo visivelmente variaveis em lugares
+			diferentes, elas preenchem a mesma linha da cache, portanto, o recurso passa a ter um problema de compartilhamento.
+			Esse problema é conhecido como falso compartilhamento de cache. Uma forma de resolver seria a atulização da tecnica pedding
+		*/
 
-   /*
-    Desta forma o desempenho ainda é lento pois cada informacao gravada na cache compartilha a mesma linha.
-    Cada linha de chache possui 64bytes. O nome deste problema é falso compartilhamento, uma forma de resolver é a tecnica padding    
-    */
+  }
 
 	for(j = 0; j < nt; j++)
 		sum += t[j];
 
 	return sum;
-	
+
 }
 
 int main(int argc, char **argv){
