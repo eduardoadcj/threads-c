@@ -26,6 +26,11 @@ int sum(int *v, int n){
 
   }
 
+   /*
+    Desta forma o desempenho ainda é lento pois cada informacao gravada na cache compartilha a mesma linha.
+    Cada linha de chache possui 64bytes. O nome deste problema é falso compartilhamento, uma forma de resolver é a tecnica padding    
+    */
+
 	for(j = 0; j < nt; j++)
 		sum += t[j];
 
