@@ -19,7 +19,7 @@ void selection_sort (int *vetor,int max)
 	
 	/*
 		Struct que serve para aplicar a tecnica de padding
-		e utilizar a linha inteira de uma cache de 64bits. 
+		e utilizar a linha inteira de uma cache de 64bytes. 
 		Pode ser substituida por um int normal.
 	*/
 	Line *min = NULL;
@@ -54,6 +54,8 @@ void selection_sort (int *vetor,int max)
 
 			/*
 				Essa notação divide os iteradores entre as threads automaticamente.
+				A função do laço é encontrar a posição em que se encontra o menor valor do subvetor, 
+				e armazena-la na posição referente ao ID da thread atual no vetor min.
 			*/
 			#pragma omp for
 			for (j = i+1; j < max; j++) {
@@ -66,15 +68,25 @@ void selection_sort (int *vetor,int max)
 
 		m = 0;
 		
+		/*
+			Encontrando a posição em que o menor valor do array min,
+			que armazena os menores valores obtidos por cada thread.
+		*/
 		for(j = 1; j < nt; j++){
 			if(vetor[min[j].n] < vetor[min[m].n])
 				m = j;
 		}
 
+		// Pegando o menor valor a partir da posição obtida
 		m = min[m].n;
 
+	//Move o valor da posição i do vetor para a variavel auxiliar
     aux = vetor[i];
+
+	//Troca o valor da posição pelo menor valor encontrado
     vetor[i] = vetor[m];
+
+	//atribui à posição do valor em que o menor valor foi encontrado ao valor da variável auxiliar
     vetor[m] = aux;
 
   }
